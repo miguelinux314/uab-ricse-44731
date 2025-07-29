@@ -1,0 +1,41 @@
+\documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
+
+\ifdefined\printMode
+\else
+\newcommand {\printMode} {1} % 0: not print mode. 1: yes print mode.
+\fi
+
+
+\newcommand \subjectName {Data Transmission and Security}
+\newcommand \subjectNumber {44731}
+\newcommand \subjectDegree {RICSE Master}
+\newcommand \subjectYear {1$^\textrm{st}$}
+\input{alias.tex}
+\input{style/style.tex}
+
+
+\begin{document}
+
+\input{chapters/cover.tex}
+\input{chapters/copyright.tex}
+\input{chapters/table_of_contents.tex}
+
+\input{chapters/chapter_1_the_course.tex}
+\input{chapters/chapter_2_data.tex}
+\input{chapters/chapter_3_entropy.tex}
+\input{chapters/chapter_4_coding.tex}
+\input{chapters/chapter_5_quantization.tex}
+\input{chapters/chapter_6_rd_analysis.tex}
+\input{chapters/chapter_7_prediction.tex}
+\input{chapters/chapter_8_transforms.tex}
+\input{chapters/chapter_9_ML.tex}
+
+\input{chapters/bibliography.tex}
+\input{chapters/indices.tex}
+
+
+\begin{comment}
+
+\end{comment}
+
+\end{document}

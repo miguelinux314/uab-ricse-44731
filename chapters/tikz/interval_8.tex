@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+% Total segment length and number of divisions
+\def\length{16}  % cm
+\def\divisions{16}
+\def\step{\length/\divisions}
+
+\draw[thick] (0,-1) -- (\length,-1);
+
+\foreach \i in {0,...,8} {
+    \draw[thin] ({\i*\step*2},-0.9) -- ({\i*\step*2},-1.1); % Vertical tick mark
+}
+\foreach \i in {0,...,7} {
+    \node[anchor=south] at ({(\i+0.5)*\step*2},-0.9) {\small \i};
+}
+
+\end{tikzpicture}

@@ -1,0 +1,32 @@
+\begin{tikzpicture}
+\begin{axis}[
+    width=14cm,
+    height=4cm,
+    domain=0:2*pi,
+    samples=500,
+    axis lines=none,
+    ticks=none,
+    xlabel={}, ylabel={},
+]
+
+% Original sine wave (2 cycles)
+\addplot[
+    thick,
+    color1,
+    domain=0:2*pi,
+    samples=500,
+] {sin(deg(2*x))};
+
+% Quantized sine wave (8 levels), step function
+\addplot[
+    thick,
+    color2,
+    const plot,
+    no markers,
+    domain=0:2*pi,
+    samples=500,
+]
+({x}, {round((sin(deg(2*x)) + 1)*3.5)/3.5 - 1});
+
+\end{axis}
+\end{tikzpicture}

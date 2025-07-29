@@ -1,0 +1,46 @@
+\chapterimage{escher_transformation}
+\chapter{Transforms}\label{sec:transforms}
+
+This unit aims to motivate the use of transforms as a stage of the data compression pipeline and to get you acquainted with some important transform types and concepts: color, block, subband, etc.
+
+\section{Transform coding}
+
+Transform coding refers to a very common data compression pipeline structure. In it, the original data samples undergo a
+\concept{transform stage}, which represents them in an alternative domain (the \concept{transform domain}). After that, data are (normally)
+quantized and finally entropy coded. Transform coding is most useful for lossy compression (whereas prediction is most useful
+for lossless or near-lossless compression). The two main advantages of applying a good transform are:
+
+\begin{itemize}
+	\item Independent transform, quantization and entropy coding stages is the fact that they simplify the design, implementation and execution of compression pipelines. Most modern, practical data compression algorithms follow this scheme for
+that reason.
+	\item Data can be better compressed by reducing statistical dependencies is advantageous because it tends to compact the energy/information in some parts of the transformed data (bands/subbands), leaving other parts with little energy/information~\cite[\S 4.3.1]{taubman2002jpeg2000}. This compaction allows obtaining better fidelity at the same rate, and the gain is larger the more we compact energy/information in fewer bands~\cite[\S 13.3, eq.~27]{sayood_introduction}\cite[p.~207]{taubman2002jpeg2000}. This is because we can quantize lesser energy/information bands and cause lower impact on the fidelity than if we quantize the higher energy/information bands~\cite[\S 13.3]{sayood_introduction}\cite["Principle Components and the KLT"]{taubman2002jpeg2000}.
+	\item Data can be better compressed by separating important and unimportant information allows improving compression ratios while discarding only little-to-no relevant details. One main way of doing this is by separating different frequencies into different bands. This way, high-frequency noise and noise-like information can be discarded while keeping the core of the signal at
+a higher fidelity. Frequency separation is particularly useful for images and other signal types because high frequencies tend to have small power , i.e., less energy/information~\cite[eq.~4.32]{taubman2002jpeg2000}. Therefore, this separation is in symbiosis with the “remove statistical dependencies” goal.
+\end{itemize}
+
+Among all possible image transforms, the ones considered in data compression are those that produce as many transformed
+coeﬃcients as samples the original signal has (also known as \concept{non-expansive} or critical transforms). Transforms that do expand the signal hinder compression ratios, while transforms that reduce the number of samples tend to discard information in a suboptimal way~\cite[\S 4.1.1]{taubman2002jpeg2000}.
+
+Within non-expansive transforms, linear transforms (usually corresponding to a matrix or tensor multiplication) are the most common, due to their relative simplicity in design, implementation and execution. \concept{Orthogonal} or biorthogonal transforms are arguably the most popular linear transforms, as these ensure that quantization errors in the transform domain do not explode in magnitude in the signal domain.
+
+Transforms can be applied independently for different blocks (\concept{block transforms}) or using a sliding window (\concept{subband transforms}). Block transforms are generally faster than subband transforms, but they tend to provide worse decorrelation capabilities, and often the block structure can be seen in the reconstructed data. In this unit we touch on the discrete cosine transform (DCT) as an example of block transform~\cite[\S 13.4.1, \S 13.4.2, \S 13.3]{sayood_introduction} and the discrete wavelet transform as an example of subband transform~\cite[\S 14.1, \S 14.2, \S 14.3, \S 14.4, \S 14.8, \S 15.1, \S 15.2, \S 16]{sayood_introduction}\cite[\S 6.2]{taubman2002jpeg2000}. \conceptRef{color transform}{Color transforms} (a type of spectral or point transforms) are a very common transform type in image compression.
+
+%\section{Perceptual coding}
+%Data are often captured to be used for a specific task. The ideal situation is to compress as much as possible, but maintaining enough fidelity in the reconstructed data so that that specific task can be accomplished. When images are to be consumed by humans, it is often desirable to compress in a \textit{numerically lossy way} (i.e., not strictly lossless compression) to maximize compression, while at the same time making the reconstructed images identical to the eye to the original ones (visually lossless). Whenever we compress data considering the features and limitations of the human senses (visual, auditory, etc.), we are doing perceptual coding, of which visually lossless compression is a type.
+
+%Perceptual coding is made possible (and at the same time fairly diﬃcult) mainly due to several aspects of the human senses:
+
+%\begin{itemize}
+%	\item Human eyes and ears respond differently to different frequencies. Therefore, we can discard more information at frequencies to which humans are less sensitive to. At the same time, we want to keep higher fidelity at
+frequencies to which humans are more sensitive to~\cite{daly1992visible}. Moreover , this frequency sensitivity is different depending on the orientation, on the brightness/color changes~\cite{mantiuk2023hdr}.
+%	\item The contents of an image affect heavily our capacity of detecting noise and other elements within images and audio ~\cite{mantiuk2023hdr, daly1992visible}. In particular , we can discard more information (and introduce more noise in the reconstruction) in zones with high “activity” (e.g., with large local variance).
+%\end{itemize}
+
+%Due to the complexity of human perception, signals reconstructed after perceptual coding need to be assessed by humans. The most accurate way of doing so is by employing subjective metrics such as qualitative scores (e.g., rating the quality of images within a scale) or quantitative measurements (e.g., computing the probability of a user to detect differences given 3 choices (2 identical, one different) and being force to identify the one different (3-alternative forced choice or 3AFC)). Subjective metrics can also be estimated via objective (algorithmic) metrics such HDR-VDP~\cite{mantiuk2023hdr}.
+
+%Whether subjective or objective metrics are considered, it is very important to consider the many perceptual elements that can affect the assessments, including: display resolution, display brightness, display MTF, distance to the display, background brightness and even psychoperceptual elements such as fatigue~\cite{mantiuk2023hdr, daly1992visible}. Tools such as the Quest toolbox can help design perceptual subjective experiments in a more eﬃcient and effective manner: \url{http://psychtoolbox.org/docs/Quest}.
+
+
+\section*{Further reading and practice}
+\vspace{0.25cm}
+

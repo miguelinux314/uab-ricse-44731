@@ -1,0 +1,6 @@
+develop_sessions/public_materials/data/*png
+develop_sessions/unit1_entropy/solution/flower-bsq*raw
+develop_sessions/unit1_entropy/solution/flower.ppm
+.idea
+.ipynb_checkpoints
+__pycache__

@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    axis line style={-},
+    xtick=\empty,
+    ytick=\empty,
+    xlabel={},
+    ylabel={},
+    domain=-5:5,
+    samples=200,
+    width=6cm,
+    height=8cm,
+    enlargelimits=true,
+    clip=true,
+    color=color2,
+]
+\addplot[color1, thick] {0.5 * exp(-abs(x)/0.25)};
+\end{axis}
+\end{tikzpicture}

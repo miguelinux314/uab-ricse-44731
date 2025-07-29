@@ -1,0 +1,124 @@
+\chapterimage{data}
+\chapter{Data}\label{sec:data}
+
+This unit introduces the notion of digital \concept{data} and discusses multiple non-trivial aspects
+that need to be considered to read/receive, manipulate and write/send them.
+
+\section{Digital media}\label{sec:data:media}
+
+Digital images typically consist of one or more matrices of \concept{integer} data~\cite{chua_data_representation}.
+%
+Each of these matrices is a \concept{band} (also known as \concept{component}).
+Each element (cell) of the matrix is a \concept{pixel}. Indices are often referred to
+using their spatial position $(x,y)$ and the index of their band, \eg, $I_{x,y,z}$.
+If only one band is used, pixels can be referred to using only the spatial indices, \eg, $I_{x,y}$.
+
+One-band images are \concept{grayscale} (sometimes loosely referred to as \concept{monochrome}).
+In them, pixels with low values are often dark (black being the lowest possible value).
+Conversely, pixels with high values are bright (white being the highest possible value).
+
+When more than one band is present, each band typically contains information about a
+limited range of light \concept{wavelengths}. For instance, $3$-band images are often \concept{RGB},
+meaning that bands describe the \concept{intensity} of red, green and blue light, respectively.
+This means that the maximum pixel value in these components represent the maximum intensity
+of red, green and blue light, respectively.
+
+There also exist images with more than $3$ bands.
+Tens, hundreds and even thousands of bands can be present, \eg,
+when produced by \concept{multispectral} and \concept{hyperspectral} sensors onboard satellites,
+or by special types of microscope. In this case,
+each band represents a narrow band of wavelengths, and the maximum pixel value
+indicates the maximum intensity of photons of those wavelengths.
+
+Many other types of digital media exist, including \concept{video}, \concept{audio}, electrocardiograms (ECGs),
+seismographic and other time series, \etc. It is often useful to consider these data as \concept{samples} of
+1D functions (\eg, audio channels, ECGs), 2D functions (\eg, monochrome images),
+3D functions (\eg, color images and monochrome video), 4D (\eg, color video)
+and even higher-dimensionality data (\eg, multispectral video and database records).
+In almost all cases, these digital data are also integer values
+although they can also be \concept{floating point}/real.
+
+\section{Data representation, raw formats and metadata}
+
+When storing data in a file or transmitting them over the network,
+samples need to be arranged in a 1D pattern, \ie, they need to be \concept{serialized}.
+\conceptRef{raster}{Raster},
+band-sequential \concept{BSQ}, band-interleaved by line \concept{BIL} and by pixel \concept{BIP}
+data orders~\cite{collins_understanding_rasters,loc_bsq,loc_bil,loc_bip} are the most prevalent.
+
+Before applying compression, samples are often (temporarily) stored using \concept{fixed-length} representations,
+hereafter referred to as \concept{raw} representations or raw data.
+%
+Longer (higher \concept{bitdepth}) representations permit
+larger \conceptRef{dynamic range}{dynamic ranges}, \ie, a larger range of possible
+values for the samples.
+%
+For instance, an image in which pixels can take one of $256$ possible values may
+be represented using $8$-bit samples. Another image in which pixels can take $1024$ possible values
+(thus allowing many more colors or shades of gray and a better quality)
+would require at least $10$ bits per sample when stored in raw format.
+
+Typically, samples are stored using full \conceptRef{byte}{bytes} ($8$, $16$, $32$ and $64$ bits)
+for efficiency reasons,
+so that programs can read them directly without having to process individual \conceptRef{bit}{bits},
+\eg, from the most significant bit (\concept{MSB}) to the least significant one (\concept{LSB}).
+%
+Regardless of their bitdepth, samples can be \concept{signed} (\eg, for audio) or \concept{unsigned}
+(\eg, most image data).
+%
+For multi-byte samples, it is necessary to specify the byte ordering:
+\concept{big endian} (\aka network order), \concept{little endian} (used by many CPU architectures).
+
+Raw formats are not compressed and require custom software tools (\eg, Imagej~\cite{rasband_imagej}).
+Thus, they are intermediate formats that simplify the input/output of other tools, particularly
+for data \concept{compression}. Since raw formats contain no \conceptRef{header}{headers},
+\concept{metainformation} about the sample \concept{geometry} and \concept{data type} must be stored separately as
+\concept{side information}, \eg, as a part of the file name or in a separate file.
+
+
+\section*{Further reading and practice}
+\vspace{0.25cm}
+\begin{remark}
+    Check the ``References'' section of the Campus Virtual if you have trouble finding any reference.
+\end{remark}
+
+\begin{itemize}
+    \item \cite{chua_data_representation}: how sample values are stored in disk/memory.
+    \item \cite{siegfried_bytes}: how digital data is structured in bits and bytes, and their meaning.
+    \item \cite{collins_understanding_rasters}: basics of digital images ("rasters") and their properties.
+        See in particular the "General properties of rasters" and "Raster Graphics" sections.
+    \item \cite{loc_bsq,loc_bil,loc_bip}: further info on BSQ, BIL and BIP data orders.
+\end{itemize}
+
+\begin{exercise}
+Complete the ``Quiz: Data I/O'' activity on the Campus Virtual.
+\end{exercise}
+
+
+\begin{exercise}
+Grab the mandrill image sample (\url{mandrill-u8be-3x512x512.raw}).
+\begin{itemize}
+    \item Open it, \eg, with ImageJ, and visualize its colors.
+    \item Read the red, green and blue pixel values at position x=100, y=200 of the mandrill image
+    and print the values.
+    \item Count the number of bits set to 1 in the image. Print that number.
+
+    \item Save a version of the mandrill image after setting all the most significant bits (MSBs)
+          of the green component to 1 (name it \url{mandrill_t93_u8be-3x512x512.raw}).
+    \item Save a version of the mandrill image after setting all the least significant bits (LSBs)
+          of the blue component to 0 (name it \url{mandrill_t94_u8be-3x512x512.raw}).
+    \item Save a version of the original mandrill image using signed integers,
+          16 bits per sample. Also, set the pixel at position $(0,0,0)$ to \texttt{0x0000} and
+          the pixel at $(1,0,0)$ to \texttt{0xFFFF}. Save it as \url{mandrill_t95_s16be-3x512x512.raw}
+          and open it with ImageJ.
+\end{itemize}
+\end{exercise}
+
+
+% ## Unit practice
+%
+% The following activities are available on the Campus Virtual to practice the concepts of this unit:
+%
+% * Unit C1 quiz: questions about raw file size, raster ordering and endianness. You should be able to obtain the maximum score (you can try as often as necessary).
+% * Unit C1 task list: submit Task 9 described in this list to practice data I/O programming and receive feedback.
+%

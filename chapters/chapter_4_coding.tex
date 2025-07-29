@@ -1,0 +1,222 @@
+\chapterimage{doors}
+\chapter{Entropy coding}\label{sec:coding}
+
+The main goals of this chapter is to formalize the most important concepts about
+codes, to link the notions of entropy and compressibility, and understand the
+role of entropy coding in data compression pipelines.
+
+\section{Codes and compressibility}
+Source coding is the process of transforming a \concept{message}, \ie,
+a sequence of input symbols $s_1,\,\ldots,\,s_N$ into
+a \concept{compact}, generally binary, \concept{representation}. To be useful,
+this process must be \concept{invertible}, \ie, it must be possible to
+(uniquely) retrieve the original symbols from the compact representation.
+
+\conceptRef{variable-length code}{Variable-length codes} transform each
+input symbol $\sigma_i$ into a \concept{codeword} $C(\sigma_i)$,
+whose \conceptRef{codeword length}{length} $L_i$ depends on that symbol's
+probability.
+The code can be expressed as a function, \eg, \mbox{$C: \alphabet \longrightarrow \{0,1\}^{*}$}.
+
+To reduce the compressed data size, the most probable symbols are
+assigned codewords of smaller lengths, and
+vice-versa~\cite[\S 2.4, \S 2.4.1, \S 2.4.2]{sayood_introduction}.
+%
+Given the length $L_i$ of each symbol $\sigma_i$,
+the code's \concept{expected length} of a code is obtained as
+$L_C = \sum_i \Pri L_i$~\cite[\S 5.1]{cover_elements}.
+
+\conceptRef{prefix code}{Prefix codes} are those for which no $C(\sigma_i)$
+is the prefix of another $C(\sigma_j)$.
+This property allows both \conceptRef{instantaneous decoding}{instantaneous}
+and \concept{unique decoding}, making it highly desirable for practical data compression.
+
+Shannon proved that a code $C$'s expected length $L_C$ must be
+at least $\entropy(\source)$~\cite[\S 5.4]{cover_elements}. One way to reach this
+result is by using Kraft-McMillan's inequality ($\sum_i D^{-L_i} \le 1$~\cite[\S 2.4.3]{sayood_introduction}) and Lagrangian optimization:
+\begin{eqnarray*}
+J &=& \sum_i \Pri L_i + \lambda \sum_i D^{-L_i}, \\
+0 = \frac{\partial J}{\partial L_i} &=& \Pri + \lambda D^{-L_i} \cdot (-1) \cdot \log D
+\Rightarrow D^{-L_i} = \frac{\Pri}{\lambda \log D}, \\
+1 \ge \sum_i D^{-L_i} &=& \frac{1}{\lambda \log D} \sum_i \Pri = \frac{1}{\lambda \log D}
+\Rightarrow \lambda \ge \frac{1}{\log D}, \\
+D^{-L_i} &=& \frac{\Pri}{\lambda \log D} \le \Pri \Rightarrow L_i \ge - \log \Pri
+\Rightarrow L_C = \sum \Pri L_i \ge \entropy(\source).
+\end{eqnarray*}
+
+It is always possible to find a prefix code that satisfies
+$L_i = \left\lceil -\log_2(\Pri)\right\rceil$~\cite[\S 2.4.2, \S 2.4.3]{sayood_introduction},
+\eg, using \concept{Huffman's algorithm} (see below).
+Thus, given a source with entropy $\entropy(\source)$, it is always possible to
+find a prefix code that satisfies $\entropy(\source) \le L_C \le \entropy(\source) + 1$.
+%
+Furthermore, by coding
+$M$ symbols at once, the bound can be tightened as much as desired:
+\mbox{$\entropy(\source) \le L_C \le \entropy(\source) + 1/M$}
+(and $\displaystyle \lim_{M\rightarrow\infty} L_C = \entropy(\source)$).
+\conceptRef{arithmetic coding}{Arithmetic coders} (also see below) are a prime example of this.
+
+A poorly designed code will have a larger expected length than
+the data's actual entropy. In particular, this will happen if we optimize a code
+for a probability distribution $P$, but the source $\source$ has a different
+distribution $Q$. The \concept{Kullback-Leibler} (KL) ``distance'',
+\aka\ \concept{relative entropy} or \concept{cross entropy}, provides
+the expected \concept{overhead}, \ie, the extra bits needed per symbol on
+average~\cite[\S 2.3, Theorem 5.4.3]{cover_elements}. This distance is defined
+as $$D(P \parallel Q) = \sum_i \Pri \log_2(\Pri/Q(\sigma_i)),$$
+using the convention $0 \log_2(0/0) = 0$, $0 \log_2(0/q) = 0\ \forall q$, and
+$p \log_2(p/0) = \infty\ \forall p > 0$.
+
+\section{Practical trade-offs}~\label{sec:coding:trade_offs}
+
+Entropy coding is a key stage of most compression \conceptRef{pipeline}{pipelines}.
+This stage is \conceptRef{lossless compression}{lossless},
+although it can be preceded by other \conceptRef{lossy compression}{lossy}
+stages to enhance compression at the cost of introducing some distortion in the data
+(see Chapters~\ref{sec:quantization} and~\ref{sec:rate_distortion}).
+
+In order for those pipelines to be practical, the algorithm selected for entropy coding
+must strike an acceptable trade-off between \concept{efficiency} (defined as $\eta = \frac{\entropy(\source)}{\textrm{compressed bitrate}}$) and \concept{computational complexity}.
+
+On one end of the spectrum, there are relatively simple algorithms designed to run fast
+requiring few resources (including energy).
+%
+Often, these algorithms code each input sample
+independently, and work best when these samples have been previously decorrelated
+(\eg, as described in Chapter~\ref{sec:prediction}).
+%
+Their trade-off is that they attain $\eta=1$ only for limited classes of probability distributions.
+%
+Prime examples of this approach are:
+\begin{itemize}
+    \item \concept{Huffman's algorithm}~\cite[\S 3.2--3.3]{sayood_introduction},~\cite[\S 2.2.1]{taubman2002jpeg2000},~\cite[\S 5.6--5.7]{cover_elements}.
+    \item \concept{Golomb-Rice} codes~\cite[\S 3.5--3.6]{sayood_introduction}, employed for instance in the CCSDS~121.0-B-3 standard~\cite[\S 3.2--3.3]{ccsds121x0b3}.
+    \item \concept{Run-Length Encoding} (RLE)~\cite{golomb_rle}.
+\end{itemize}
+
+On the other side of the spectrum, there are algorithms designed to consistently achieve high efficiencies approaching $\eta=1$
+for most distributions, generally at the cost of higher computational complexities. To do so, instead of coding individual symbols,
+they process a sequence of symbols and produce a single output codeword. Traditionally,
+the main paradigm used for this purpose is
+\conceptRef{arithmetic coding}{Arithmetic Coding}~\cite[\S 4]{sayood_introduction},\cite[\S 2.3]{taubman2002jpeg2000},
+sometimes referred to as \concept{range coding}. Some prime examples of this paradigm are:
+    \begin{itemize}
+    \item the \concept{CABAC} entropy coders of the popular video codecs H.264 (AVC, 2003), H.265 (HEVC, 2013) and H.266 (VVC, 2017),
+    \item the \concept{MQ} entropy coder of JPEG~2000,
+    \item the \concept{PAQ} family of entropy coders, among others.
+    \end{itemize}
+
+More recently, thanks to Jarosław Duda's contributions~\cite{duda_asn}, entropy coding
+has been shifting towards \concept{Asymmetric Numeral Systems} (ASNs), specially its
+\concept{Finite State Entropy} (FSE) realizations. Some important examples of ASN are:
+    \begin{itemize}
+    \item \concept{Zstandard} (\aka\ zstd)~\cite{collet_zstd},
+    \item LZFSE~\cite{lzfse},
+    \item \concept{JPEG~XL}~\cite{jpeg_xl}, and
+    \item CCSDS~123.0-B-2~\cite{ccsds123x0b2}, among many others.
+    \end{itemize}
+
+\section{Universality and Adaptativity}\label{sec:coding:adaptativity}
+
+The most basic versions of the entropy coders mentioned in Chapter~\ref{sec:coding:trade_offs}
+rely on two main assumptions: the probability distribution of the source \source\ is known \textit{a priori},
+and that probability does not change throughout the compression process. Neither of these assumptions hold
+generally in practice, and a \concept{two-pass} approach is not necessarily practical.
+
+In the late 70's, Ziv and Lempel introduced the \concept{LZ77}~\cite[\S 5.4.1]{sayood_introduction}~\cite{lz77}
+and \concept{LZ78}~\cite[\S 5.4.1]{sayood_introduction} algorithms,
+often referred to as \concept{zip} compression, which dynamically build a dictionary of previously
+seen sequences. As new symbols are input, symbols can be efficiently represented referencing that dictionary.
+These algorithms seeded a vast class of compressors that is still relevant and growing today.
+
+Algorithms such as Huffman and Arithmetic Coding can be extended so that they use \concept{adaptive} probability
+models. While still reading each input sample only once, these algorithms change their estimation of each symbol's
+probability based on previously observed samples:
+\begin{itemize}
+\item  With Huffman, for instance, input samples can be divided into blocks, and
+the statistics gathered for one block can be used to generate the code table for the next block.
+
+\item With an Arithmetic Coder, each sample can be used to update the probability range division
+characteristic of this algorithm. It is also typical to employ contexts to further refine the
+probability model and better exploit any redundancy present in the inputs,
+like CABAC does, and as previously mentioned in Chapter~\ref{sec:info:surprise}.
+\end{itemize}
+
+\section*{Further reading and practice}
+\vspace{0.25cm}
+
+\begin{itemize}
+\item Sayood's book~\cite{sayood_introduction} provides invaluable and very accessible insight on most topics of this unit,
+particularly in Sections 2.4, 3.2, 3.5 and 3.6.
+
+\item Taubman and Marcellin's book~\cite{taubman2002jpeg2000} offers a somewhat more rigorous (not that Sayood's isn't!) treatment of these algorithms, often from the perspective of image compression, in Sections 2.2, 2.3, and 2.4.
+
+\item A thorough analysis of universal coders (including Arithmetic and LZ coding) can be found in~\cite[\S 13]{cover_elements}.
+
+\item The book by McAnlis and Haecky provides a very clear description of tANS, one of the main
+variants of asymmetric numeral systems~\cite[\S 5.5]{mcanlis_understanding}. Further mathematical
+insight, including its relation to computer security (cryptography), can be found in Duda's paper~\cite{duda_asn}.
+
+\end{itemize}
+
+
+\begin{exercise}
+Consider the four following codes for a four-symbol alphabet $\alphabet = \{a,b,c,d\}$:
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Code $\mathbf{C}$} & $\mathbf{C(a)}$ & $\mathbf{C(b)}$ & $\mathbf{C(c)}$ & $\mathbf{C(d)}$ \\
+\toprule
+$C_1$ & \texttt{0} & \texttt{0} & \texttt{0} & \texttt{0} \\
+$C_2$ & \texttt{0} & \texttt{010} & \texttt{01} & \texttt{10} \\
+$C_3$ & \texttt{10} & \texttt{00} & \texttt{11} & \texttt{110} \\
+$C_4$ & \texttt{0} & \texttt{10} & \texttt{110} & \texttt{111} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item Which of the codes are usable?
+\item Which compresses best?
+\end{itemize}
+
+\end{exercise}
+
+
+\begin{exercise}
+What's the minimum and maximum overhead of Huffman coding?
+When's the minimum overhead achieved? How about the maximum?
+\end{exercise}
+
+\begin{exercise}
+Is RLE better suited for high-entropy or low entropy sources?
+\end{exercise}
+
+\begin{exercise}
+What type of distribution are Golomb codes optimal for?
+\end{exercise}
+
+\begin{exercise}
+Find the distribution of English characters. Based on that probability model,
+encode your name using
+\begin{enumerate}
+    \item Huffman coding
+    \item Arithmetic coding
+\end{enumerate}
+If needed, romanize your name so that it contains only English caracters (\eg, using Pinyin).
+\end{exercise}
+
+\begin{exercise}
+Find implementations of a couple of entropy coders among the described in this section, \eg, at:
+\begin{itemize}
+\item \url{https://github.com/nayuki/Reference-arithmetic-coding}
+\item \url{https://github.com/nayuki/Reference-Huffman-coding}
+\item \url{https://github.com/Cyan4973/FiniteStateEntropy}
+\item \url{https://github.com/miguelinux314/pyac}
+\end{itemize}
+
+Apply them to the \url{mandrill-u8be-3x512x512.raw} image and compare the actual compressed
+size against its entropy.
+\end{exercise}
+

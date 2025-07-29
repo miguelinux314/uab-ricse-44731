@@ -1,0 +1,47 @@
+\chapterimage{brain}
+\chapter{Machine Learning data compression}\label{sec:ML}
+
+This unit makes a general introduction to Machnine Learning (ML) applied to data compression, and in particular the usage of autoencoders for lossy image compression.
+
+\section{Introduction to neural networks}
+
+This lecture series introducing neural networks is highly recommended to follow this section: \url{https://youtu.be/aircAruvnKk?si=wLi-pbPuG3ZVliG2}
+
+A \concept{neural network} is a parametric map, $f_{\theta}:\mathbb{R}^n \rightarrow \mathbb{R}^m$, whose parameters, $\theta\in \mathbb{R}^p$, are optimised to minimise a loss function, $L(\theta, x) : \mathbb{R}^p \times \mathcal{X} \rightarrow \mathbb{R}$, where $\mathcal{X}\subset\mathbb{R}^n$ is a data set for which we optimise our network. To \concept{train} a neural network is to find a set of parameters $\hat{\theta}$ that minimise the loss function across our data set. We call \concept{inference} the application of $f_{\hat{\theta}}$ on real data, which in general is not in $\mathcal{X}$.
+
+Typically, neural networks are structured into \concept{nodes}, which are real numbers. These are either inputs, $x$, or are calculated from other nodes whose value is already known, based on the \concept{connections} in the network. Typically, the operations described by these links are linear operations, with parameters from $\theta$ as weights, followed by a non-linear function referred to as an \concept{activation function}. Nodes are typically arranged into \concept{layers} which are computed in sequence, with the nodes in a given layer being all calculated out of the values of nodes in the previous layer. 
+
+\conceptRef{backpropagation}{Backpropagation} is the recursive algorithm by which we can compute the gradient of a \textit{differentiable} loss function with respect to the parameters (weights and bias) of the neural network. The gradient of the loss function is key for the training of the network under this algorithm, hence the requirement for it to be differentiable. Backpropagation is, in essence, an efficient way of computing the gradient of the loss function with respect to $\theta$, so that a local minimum of that function may be found through stochastic gradient descent. The main mathematical concept behind backpropagation is the chain rule from calculus, which is recursively applied from the output layer (ground case) towards the input layer. As such, backpropagation iteratively updates the parameters in the neural network by:
+
+\begin{enumerate}
+	\item Calculating the gradient of the loss function at a given data point and the current parameters, $\nabla L(\theta_i, x)$
+	\item Updating the parameters by adding that gradient, $\theta_{i+1} = \theta_i -\alpha \nabla L(\theta_i, x)$, where $\alpha>0$ is the \concept{learning rate}.
+\end{enumerate}
+
+The kwy property of neural networks is that they can be used as universal approximators of any mapping: a \textit{sufficiently large} neural network can be optimised to be arbitrarily close to any arbitrary mapping $\mathbb{R}^n \rightarrow \mathbb{R}^m$~\cite{hornik1991approximation, kidger2020universal}.
+
+
+\section{Autoencoders for image compression}
+
+An \concept{autoencoder} is a type of neural network used to learn efficient codings of unlabeled data (unsupervised learning). An autoencoder learns two functions: an \concept{encoding transform} that maps the input data, $x\in \mathbb{R}^n$, into a \concept{latent representation}, $y\in \mathbb{R}^m$, and a \concept{decoding transform} that recreates the input data from the latent representation, obtaining $\hat{x}\in \mathbb{R}^n$. The autoencoder learns an efficient representation (encoding) for a set of data, typically for dimensionality reduction, to generate lower-dimensional embeddings for subsequent use by other machine learning algorithms. This overall structure is optimised to minimise the \textit{distortion} between the original and reconstructed data, $D(x, \hat{x})$, for example under mean squared error (MSE).
+
+For data compression, lower dimensionality alone is insufficient for efficient data compression, and entropy coding is applied to the latent representation. To that effect, the autoencoder may be also optimised to minimise the coding rate of the latent representation, $R(y)$. Observe that the entropy of $y$ is not a differentiable function, so it cannot be directly used in the loss function. Instead, as proposed by Ballé \textit{et al.}, a prior probability distribution is used, and the distribution of $y$ is fit to that prior~\cite{BalleLaparra2017factorised, Balle2021NTC}. Given the prior probability mass function $P$, the expected codeword length for each individual value of $y$ is $-\log(P(y_i))$, thus $R(y) = - \sum_i \log(P(y_i))$.
+
+There are, therefore, two contradictory terms we wish to optimise our network for: rate and distortion. Clearly, minimum rate is achieved if we send no data (or constant data), while minimum distortion is achieved if the original data is transmitted as is, with no reduction. To accommodate this trade-off, a relaxation of the problem is used, setting the loss function to the Lagrangian $L(\theta, x) = R(y) + \lambda D(x, \hat{x})$, where $\lambda$ is a constant regulating the trade-off between rate and distortion.
+
+This rate-distortion minimisation scheme using autoencoders has been highly successful in image compression, outperforming a wide variety of conventional image compression techniques over the years~\cite{BalleLaparra2017factorised, balle2018hyperprior, minnen2018hierarchical, choi2019conditional, cheng2019residual, yang2020modulated, cheng2020gmm_attention, yang2021slimmable,  He2022ELIC, fu2024checkerboardresidual}.
+
+
+\section*{Further reading and practice}
+\vspace{0.25cm}
+
+\begin{exercise}
+Try the \url{TDS2526_Session_3.ipynb} notebook to acquaint yourself with tools such as Tensorflow and neural networks. You may run these in Google Colab (\url{http://colab.research.google.com}) or locally using Jupyter Notebooks:
+
+\begin{verbatim}
+# Install the environment using PIP
+pip install notebook
+# Run the environment. This should automatically open a window in your browser.
+python -m notebook
+\end{verbatim}
+\end{exercise}
