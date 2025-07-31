@@ -52,8 +52,8 @@ Transforms can be applied independently for different blocks (\concept{block tra
 Let $a_1, \ldots, a_n\in\mathbb{Z}$ be a set of randomly-selected integers (for example, uniformly randomly selected from a fixed-sized interval). Consider the set of vectors $\mathcal{X}=\lbrace (a_i, 2a_i -1) \rbrace$.
 \begin{enumerate}
 \item What is the entropy of each component of the vectors of $\mathcal{X}$? Is it higher for one component than the other?
-\item Consider a transform $f : \mathcal{X} \rightarrow \mathhbb{Z}^2$ defined as $f((a_i, 2a_i -1)) = (a_i, 0)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
-\item Consider another transform $g : \mathcal{X} \rightarrow \mathhbb{Z}^2$, now defined as $g((a_i, 2a_i -1)) = (a_i \mod 4, 0)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
+\item Consider a transform $f : \mathcal{X} \rightarrow \mathbb{Z}^2$ defined as $f((a_i, 2a_i -1)) = (a_i, 0)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
+\item Consider another transform $g : \mathcal{X} \rightarrow \mathbb{Z}^2$, now defined as $g((a_i, 2a_i -1)) = (a_i \mod 4, 0)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
 \end{enumerate}
 \end{exercise}
 
@@ -61,8 +61,8 @@ Let $a_1, \ldots, a_n\in\mathbb{Z}$ be a set of randomly-selected integers (for 
 Let $x_1, \ldots , x_n \in [-16,16]$ and $y_1, \ldots , y_n \in [-2,2]$ be two sets of uniformly-distributed random real numbers, and let $\mathcal{X}=\lbrace (x_i + y_i, y_i - x_i) \rbrace$ be a set of vectors in $\mathbb{R}^2$. We define $\operatorname{Round}(x,y) = \lbrace (\lfloor x \rceil, \lfloor y \rceil ) \rbrace$.
 \begin{enumerate}
 \item What is the entropy of each component of the vectors of $\operatorname{Round}(\mathcal{X})$? Is it higher for one component than the other?
-\item Consider a transform $f : \mathcal{X} \rightarrow \mathhbb{Z}^2$ defined as $f(x,y) = (\lfloor 2x \receil, \lfloor y \rceil)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
-\item Consider another transform $g : \mathcal{X} \rightarrow \mathhbb{Z}^2$, now defined as $g(x,y) = (\lfloor \frac{x}{16} \receil, \lfloor \frac{y}{2} \rceil)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
+\item Consider a transform $f : \mathcal{X} \rightarrow \mathbb{Z}^2$ defined as $f(x,y) = (\lfloor 2x \rceil, \lfloor y \rceil)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
+\item Consider another transform $g : \mathcal{X} \rightarrow \mathbb{Z}^2$, now defined as $g(x,y) = (\lfloor \frac{x}{16} \rceil, \lfloor \frac{y}{2} \rceil)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
 \item Find a transform that maps $\mathcal{X}$ to $\lbrace (x_i,y_i) \rbrace$. If we apply $\operatorname{Round}$ to this resulting data set and reverse the transform, what is the expected reconstruction error? How could you modify that transform to ensure the error from rounding is, at most, 1?
 \end{enumerate}
 \end{exercise}
