@@ -44,6 +44,27 @@ Transforms can be applied independently for different blocks (\concept{block tra
 
 \begin{itemize}
 \item David Salomon's data compression book~\cite{salomon_compression_complete} contains several sections on transforms for data compression. Sections 4.4, 4.5, and 4.6 introduce transforms for image compression, and Chapter 5 provides a deep dive on the wavelet transform and its usage in data compression.
+\vspace{0.1cm}
+\item Goyal's magazine article on the theoretical foundations of transform coding is an easy read on the topic~\cite{goyal_transform_coding}.
 \end{itemize}
+
+\begin{exercise}
+Let $a_1, \ldots, a_n\in\mathbb{Z}$ be a set of randomly-selected integers (for example, uniformly randomly selected from a fixed-sized interval). Consider the set of vectors $\mathcal{X}=\lbrace (a_i, 2a_i -1) \rbrace$.
+\begin{enumerate}
+\item What is the entropy of each component of the vectors of $\mathcal{X}$? Is it higher for one component than the other?
+\item Consider a transform $f : \mathcal{X} \rightarrow \mathhbb{Z}^2$ defined as $f((a_i, 2a_i -1)) = (a_i, 0)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
+\item Consider another transform $g : \mathcal{X} \rightarrow \mathhbb{Z}^2$, now defined as $g((a_i, 2a_i -1)) = (a_i \mod 4, 0)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Let $x_1, \ldots , x_n \in [-16,16]$ and $y_1, \ldots , y_n \in [-2,2]$ be two sets of uniformly-distributed random real numbers, and let $\mathcal{X}=\lbrace (x_i, y_i) \rbrace$ be a set of vectors in $\mathbb{R}^2$. We define $\operatorname{Round}(\mathcal{X}) = \lbrace (\lfloor x_i \rceil, \lfloor y_i \rceil ) \rbrace$ as the set of rounded vectors from $\mathcal{X}$.
+\begin{enumerate}
+\item What is the entropy of each component of the vectors of $\operatorname{Round}(\mathcal{X})$? Is it higher for one component than the other?
+\item Consider a transform $f : \mathcal{X} \rightarrow \mathhbb{Z}^2$ defined as $f(x,y) = (\lfloor 2x \receil, \lfloor y \rceil)$. What is the entropy of each component of the transformed vectors? Is it different from the previous exercise? Is this transform good to encode $\mathcal{X}$?
+\item Consider another transform $g : \mathcal{X} \rightarrow \mathhbb{Z}^2$, now defined as $g(x,y) = (\lfloor \frac{x}{16} \receil, \lfloor \frac{y}{2} \rceil)$. What is the entropy of each component of the transformed vectors now? Is this transform better than $f$ to encode the vectors in $\mathcal{X}$?
+\end{enumerate}
+\end{exercise}
+
 \vspace{0.25cm}
 
