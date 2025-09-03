@@ -67,5 +67,13 @@ Let $x_1, \ldots , x_n \in [-16,16]$ and $y_1, \ldots , y_n \in [-2,2]$ be two s
 \end{enumerate}
 \end{exercise}
 
+\begin{exercise}
+Apply the integer Haar transform horizontally and then vertically to the mandrill image sample (\url{mandrill-u8be-3x512x512.raw}). Recall the low-pass filter for the Haar transform is $\left( \frac{1}{2}, \frac{1}{2} \right)$, applying the floor function to its outputs, and the high-pass filter is $(-1, 1)$.
+\begin{enumerate}
+\item Which of the 4 resulting subbands (LL, LH, HL, HH) has higher entropy?
+\item What do you see when you visualise these subbands? Which of them preserves most features from the original data?
+\item Set to 0 the subband with lowest entropy and undo the Haar transform. Recall that the inverse low-pass filter is $\left( 1, -\frac{1}{2} \right)$ and the inverse high-pass filter is $\left( 1, \frac{1}{2}\right)$, applying the ceiling function to the outputs of both. What is the mean squared error and peak absolute error? Can you explain why they are those quantities?
+\end{exercise}
+
 \vspace{0.25cm}
 
